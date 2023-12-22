@@ -1,0 +1,58 @@
+﻿import pygame
+import os
+import sys
+
+
+def load_image(name, colorkey=None):
+    fullname = os.path.join(r'C:\Users\Schwannenvogel\Desktop\pygame_task', name)
+
+    if not os.path.isfile(fullname):
+        print(f"Файл с изображением '{fullname}' не найден")
+        sys.exit(0)
+    image = pygame.image.load(fullname)
+    return image
+
+
+class Car(pygame.sprite.Sprite):
+    image = load_image('car2.png')
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Car.image
+        self.rect = self.image.get_rect()
+
+        self.rect.x = 0
+        self.rect.y = 0
+
+        self.direction = 1
+
+    def update(self):
+        self.rect.move(10 * self.direction, 0)
+
+        if self.rect.x + self.image.get_width() >= 600:
+            self.direction *= -1
+            self.image = pygame.transform.flip(self.image, True, False)
+
+
+if __name__ == '__main__':
+    pygame.init()
+    size = width, height = 600, 95
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption('Машинка')
+    screen.fill(pygame.Color('#ffffff'))
+
+    clock = pygame.time.Clock()
+    all_sprites = pygame.sprite.Group()
+    Car(all_sprites)
+
+    running = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        screen.fill(pygame.Color('#ffffff'))
+
+        all_sprites.draw(screen)
+        all_sprites.update()
